@@ -1,23 +1,28 @@
 import React, { Component }  from 'react';
 import Container  from './Container';
+import Footer from './Footer';
 import './App.css';
 import { render } from '@testing-library/react';
 import {getAllStudents} from './client';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Avatar, Table,Spin,Icon } from 'antd';
+import { Avatar, Table,Spin,Icon,Modal } from 'antd';
 
 const getIndicatorIcon = () => <LoadingOutlined style={{ fontSize: 24 }} spin />;
 class App extends Component{
 
   state = {
     students :[],
-    isFetching: false
+    isFetching: false,
+    isAddStudentModalVisible: false
   }
 
   componentDidMount () {
     this.fetchStudents(); 
-
   }
+  
+  openAddStudentModal = () => this.setState({isAddStudentModalVisible: true})
+  closeAddStudentModal = () => this.setState({isAddStudentModalVisible: false})
+
   fetchStudents = () => {
     this.setState({
       isFetching: true
@@ -33,7 +38,7 @@ class App extends Component{
       }));
   }
     render() {
-      const { students,isFetching } = this.state;
+      const { students,isFetching, isAddStudentModalVisible } = this.state;
 
       if (isFetching) {
         return (
@@ -83,11 +88,22 @@ class App extends Component{
         ];
         return(
           <Container>
-        <Table 
-        dataSource={students}
-        columns={columns}
-        pagination={false}
-        rowKey='studentId' />
+            <Table 
+              dataSource={students}
+              columns={columns}
+              pagination={false}
+              rowKey='studentId' />
+              <Modal 
+                title='Add new student'
+                open={isAddStudentModalVisible}
+                onOk={this.openAddStudentModal}
+                onCancel={this.closeAddStudentModal}
+                width={1000}>
+                <h1>Add student</h1>
+
+    </Modal>
+            <Footer numberOfStudents={students.length}
+            handleAddStudentClickEvent= {this.openAddStudentModal}/>
         </Container>
         );
       }
