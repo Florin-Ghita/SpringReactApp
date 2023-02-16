@@ -5,6 +5,7 @@ import './App.css';
 import { render } from '@testing-library/react';
 import {getAllStudents} from './client';
 import { LoadingOutlined } from '@ant-design/icons';
+import AddStudentForm from './forms/AddStudentForm';
 import { Avatar, Table,Spin,Icon,Modal } from 'antd';
 
 const getIndicatorIcon = () => <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -100,6 +101,7 @@ class App extends Component{
                 onCancel={this.closeAddStudentModal}
                 width={1000}>
                 <h1>Add student</h1>
+                <AddStudentForm />
 
     </Modal>
             <Footer numberOfStudents={students.length}
