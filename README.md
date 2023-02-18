@@ -1,2 +1,2 @@
 # SpringReactApp
-Ussed tehnologies : mockaroo ,react ,flywaydb, postgresql, docker
+Used tehnologies : mockaroo ,react ,flywaydb, postgresql, docker, formik
