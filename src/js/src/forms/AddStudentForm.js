@@ -1,13 +1,13 @@
-import React, { Component }  from 'react';
+import React from 'react';
 import { Formik } from "formik";
-import { Input, Button } from 'antd';
+import { Input, Button, Tag } from 'antd';
+import { addNewStudent } from '../client';
 
 const inputBottomMargin = {marginBottom: '5px'};
+const tagStyle = {backgroundColor: '#f50', color: 'white',...inputBottomMargin};
 
 
-class AddStudentForm extends Component {
-    render () {
-        return ( 
+const AddStudentForm = (props) => ( 
                 <Formik
                 initialValues={{firstName: '', lastName: '', email: '', gender: ''}}
                 validate={values => {
@@ -35,21 +35,24 @@ class AddStudentForm extends Component {
                     }
                     return errors;
                 }}
-                onSubmit={(values, { setSubmitting }) => {
-                    setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2));
+                onSubmit={(student, { setSubmitting }) => {
+                    addNewStudent(student).then(() => {
+                    props.onSuccess();
                     setSubmitting(false);
-                    }, 400);
+                    })
+                    
                 }}
                 >
                 {({
                     values,
                     errors,
                     touched,
-                    handleChange,
+                    handleChange, 
                     handleBlur,
                     handleSubmit,
                     isSubmitting,
+                    submitForm,
+                    isValid
                     /* and other goodies */
                 }) => (
                     <form onSubmit={handleSubmit}>
@@ -61,7 +64,8 @@ class AddStudentForm extends Component {
                             value={values.firstName}
                             placeholder='First name'
                         />
-                        {errors.firstName && touched.firstName && errors.firstName}
+                        {errors.firstName && touched.firstName &&
+                         <Tag style={tagStyle}>{errors.firstName} </Tag>}
                         <Input
                             style={inputBottomMargin}
                             name="lastName"
@@ -70,7 +74,7 @@ class AddStudentForm extends Component {
                             value={values.lastName}
                             placeholder='Last name'
                         />
-                        {errors.lastName && touched.lastName && errors.lastName}
+                        {errors.lastName && touched.lastName && <Tag style={tagStyle}>{errors.lastName} </Tag>}
                         <Input
                             style={inputBottomMargin}
                             name="email"
@@ -80,7 +84,7 @@ class AddStudentForm extends Component {
                             value={values.email}
                             placeholder='Email'
                         />
-                        {errors.email && touched.email && errors.email}
+                        {errors.email && touched.email && <Tag style={tagStyle}>{errors.email} </Tag>}
                         <Input
                             style={inputBottomMargin}
                             name="gender"
@@ -89,8 +93,11 @@ class AddStudentForm extends Component {
                             value={values.gender}
                             placeholder='gender'
                         />
-                        {errors.gender && touched.gender && errors.gender}
-                        <Button type="submit" disabled={isSubmitting}>
+                        {errors.gender && touched.gender && <Tag style={tagStyle}>{errors.gender} </Tag>}
+                        <Button style={tagStyle} 
+                        onClick={() => submitForm()} 
+                        type='submit' 
+                        disabled={isSubmitting | (touched && !isValid)}>
                             Submit
                         </Button>
                     </form>
@@ -98,7 +105,6 @@ class AddStudentForm extends Component {
                 </Formik>
         )
 
-    }
-}
+
 
 export default AddStudentForm;

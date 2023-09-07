@@ -2,11 +2,11 @@ import React, { Component }  from 'react';
 import Container  from './Container';
 import Footer from './Footer';
 import './App.css';
-import { render } from '@testing-library/react';
 import {getAllStudents} from './client';
 import { LoadingOutlined } from '@ant-design/icons';
 import AddStudentForm from './forms/AddStudentForm';
-import { Avatar, Table,Spin,Icon,Modal } from 'antd';
+import {errorNotification} from './Notification';
+import { Avatar, Table,Spin,Modal } from 'antd';
 
 const getIndicatorIcon = () => <LoadingOutlined style={{ fontSize: 24 }} spin />;
 class App extends Component{
@@ -36,7 +36,15 @@ class App extends Component{
         students,
         isFetching: false
       });
-      }));
+      }))
+      .catch(error => {
+        console.log(error.error);
+        const message = error.error.message;
+        errorNotification(message, message);
+        this.setState({
+          isFetching: false
+        });
+      }); 
   }
     render() {
       const { students,isFetching, isAddStudentModalVisible } = this.state;
@@ -90,23 +98,29 @@ class App extends Component{
         return(
           <Container>
             <Table 
+              style={{marginBottom: '100px'}}
               dataSource={students}
               columns={columns}
               pagination={false}
               rowKey='studentId' />
-              <Modal 
-                title='Add new student'
-                open={isAddStudentModalVisible}
-                onOk={this.openAddStudentModal}
-                onCancel={this.closeAddStudentModal}
-                width={1000}>
-                <h1>Add student</h1>
-                <AddStudentForm />
+            <Modal 
+              title='Add new student'
+              open={isAddStudentModalVisible}
+              onOk={this.openAddStudentModal}
+              onCancel={this.closeAddStudentModal}
+              width={1000}>
+              <h1>Add student</h1>
+              <AddStudentForm 
+              onSuccess={() => {
+                this.closeAddStudentModal();
+                this.fetchStudents();
+              }}
+              />
 
-    </Modal>
-            <Footer numberOfStudents={students.length}
-            handleAddStudentClickEvent= {this.openAddStudentModal}/>
-        </Container>
+            </Modal>
+               <Footer numberOfStudents={students.length}
+               handleAddStudentClickEvent= {this.openAddStudentModal}/>
+          </Container>
         );
       }
       return <h1>No Students found</h1>
